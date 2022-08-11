@@ -1,0 +1,2 @@
+env = Environment(CCFLAGS='-std=c++17 -Wall -O3')
+env.Program('main.cc', LIBS=['pthread'])
