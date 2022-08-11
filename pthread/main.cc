@@ -2,6 +2,7 @@
 #include <sched.h>
 #include <syscall.h>
 
+#include <chrono>
 #include <iostream>
 #include <thread>
 #include <vector>
@@ -28,6 +29,8 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
+  auto start = std::chrono::system_clock::now();
+
   std::vector<std::thread> v;
   for (int i = 0; i < THREAD_NUM; ++i) {
     v.emplace_back(func);
@@ -36,6 +39,13 @@ int main(int argc, char *argv[]) {
   for (auto &t : v) {
     t.join();
   }
+
+  auto end = std::chrono::system_clock::now();
+  double t = static_cast<double>(
+      std::chrono::duration_cast<std::chrono::microseconds>(end - start)
+          .count());
+  std::cout << "total " << t << " usec, " << t / YIELD_COUNT << " usec/yield"
+            << std::endl;
 
   return EXIT_SUCCESS;
 }

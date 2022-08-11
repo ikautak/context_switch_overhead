@@ -1,3 +1,4 @@
+#include <chrono>
 #include <iostream>
 #include <vector>
 
@@ -28,6 +29,8 @@ int main(int argc, char *argv[]) {
     v.push_back(aco_create(main_co, sstk, 0, func, nullptr));
   }
 
+  auto start = std::chrono::system_clock::now();
+
   for (int i = 0; i < YIELD_COUNT; ++i) {
     for (auto &t : v) {
       aco_resume(t);
@@ -36,6 +39,13 @@ int main(int argc, char *argv[]) {
 
   aco_share_stack_destroy(sstk);
   aco_destroy(main_co);
+
+  auto end = std::chrono::system_clock::now();
+  double t = static_cast<double>(
+      std::chrono::duration_cast<std::chrono::microseconds>(end - start)
+          .count());
+  std::cout << "total " << t << " usec, " << t / YIELD_COUNT << " usec/yield"
+            << std::endl;
 
   return EXIT_SUCCESS;
 }

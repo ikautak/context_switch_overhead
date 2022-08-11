@@ -1,3 +1,4 @@
+#include <chrono>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
@@ -35,11 +36,20 @@ int main(int argc, char* argv[]) {
   ABT_xstream_create(ABT_SCHED_NULL, &xstream);
   ABT_xstream_get_main_pools(xstream, 1, &pool);
 
+  auto start = std::chrono::system_clock::now();
+
   for (int i = 0; i < THREAD_NUM; ++i) {
     ABT_thread_create(pool, func, nullptr, ABT_THREAD_ATTR_NULL, &threads[i]);
   }
 
   ABT_thread_join_many(THREAD_NUM, &threads[0]);
+
+  auto end = std::chrono::system_clock::now();
+  double t = static_cast<double>(
+      std::chrono::duration_cast<std::chrono::microseconds>(end - start)
+          .count());
+  std::cout << "total " << t << " usec, " << t / YIELD_COUNT << " usec/yield"
+            << std::endl;
 
   return EXIT_SUCCESS;
 }
