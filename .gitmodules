@@ -1,0 +1,3 @@
+[submodule "libaco/libaco"]
+	path = libaco/libaco
+	url = https://github.com/hnes/libaco.git
